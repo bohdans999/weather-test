@@ -1,5 +1,5 @@
 // OpenWeatherAPI weather data response type. Includes only needed fields
-export interface IWeatherReport {
+export interface IWeatherReportResponse {
   name: string; // Name of the city
   id: number; // ID of the cityI
   weather: {
@@ -21,4 +21,13 @@ export interface IWeatherReport {
   clouds: {
     all: number; // %
   };
+}
+
+export interface IWeatherReport extends IWeatherReportResponse {
+  measurement: Unit;
+}
+
+export enum Unit {
+  IMPERIAL = 'imperial',
+  METRIC = 'metric',
 }

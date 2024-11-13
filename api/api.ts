@@ -1,11 +1,12 @@
-import { IWeatherReport } from '@/types/weather';
+import { IWeatherReport, IWeatherReportResponse, Unit } from '@/types/weather';
 
 const WEATHER_API_URL = process.env.EXPO_PUBLIC_OPEN_WEATHER_URL;
+const WEATHER_STATIC_URL = process.env.EXPO_PUBLIC_OPEN_WEATHER_STATIC_URL;
 const WEATHER_API_KEY = process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY;
 
 export const getWeather = async (
   city: string,
-  units: 'metric' | 'imperial' = 'metric',
+  units: Unit = Unit.METRIC,
 ): Promise<IWeatherReport | { message: string }> => {
   const res = await fetch(
     `${WEATHER_API_URL}/data/2.5/weather?q=${city}&units=${units}&appid=${WEATHER_API_KEY}`,
@@ -15,5 +16,14 @@ export const getWeather = async (
     throw await res.json();
   }
 
-  return await res.json();
+  const data = await res.json();
+
+  return {
+    ...data,
+    measurement: units
+  }
+};
+
+export const getWeatherIconUrl = (icon: string) => {
+  return `${WEATHER_STATIC_URL}/img/wn/${icon}@2x.png`;
 };

@@ -1,3 +1,4 @@
+import { useWeatherStore } from '@/store/weatherStore';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -9,6 +10,8 @@ import 'react-native-reanimated';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { selectedWeather } = useWeatherStore();
+
   // Loading fonts
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -27,7 +30,17 @@ export default function RootLayout() {
 
   return (
     <>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name='weather'
+          options={{
+            headerShown: true,
+            title: `Weather in ${selectedWeather?.name}`,
+            headerStyle: { backgroundColor: '#181818' },
+            headerTintColor: 'white'
+          }}
+        />
+      </Stack>
 
       <StatusBar style='auto' />
     </>
