@@ -1,11 +1,14 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { getWeather } from '@/api/api';
+import RadioButtonsSelector from '@/components/RadioButton';
 import { useWeatherStore } from '@/store/weatherStore';
-import { IWeatherReport } from '@/types/weather';
+import { IWeatherReport, Unit } from '@/types/weather';
 import { capitalizeSentence } from '@/utils/string';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+
+const units = [Unit.METRIC, Unit.IMPERIAL];
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -20,10 +23,18 @@ export default function HomeScreen() {
   // Fetching state
   const [isLoading, setIsLoading] = useState(false);
 
+  // Unit of measurement state
+  const [unit, setUnit] = useState(Unit.METRIC);
+
   // Fetches weather data
   const handleSearch = () => {
+    if (!search) {
+      setError('Please type in city name');
+      return;
+    }
+
     setIsLoading(true);
-    getWeather(search)
+    getWeather(search, unit)
       .then(data => {
         // Selects data and redirects to the details page
         selectWeather(data as IWeatherReport);
@@ -54,6 +65,12 @@ export default function HomeScreen() {
         onChangeText={handleChangeText}
         placeholder='Enter city...'
         style={styles.input}
+      />
+
+      <RadioButtonsSelector
+        options={units}
+        selectedOption={unit}
+        selectOption={setUnit}
       />
 
       <Pressable
@@ -119,4 +136,6 @@ const styles = StyleSheet.create({
 
     color: 'red',
   },
+
+  radios: {},
 });
