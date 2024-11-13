@@ -20,19 +20,23 @@ export default function HomeScreen() {
   // Fetching state
   const [isLoading, setIsLoading] = useState(false);
 
+  // Fetches weather data
   const handleSearch = () => {
     setIsLoading(true);
     getWeather(search)
       .then(data => {
+        // Selects data and redirects to the details page
         selectWeather(data as IWeatherReport);
         router.navigate('/weather');
       })
       .catch(e => {
+        // Sets error message
         setError(capitalizeSentence(e.message));
       })
       .finally(() => setIsLoading(false));
   };
 
+  // On text change deletes error message, if exists
   const handleChangeText = (value: string) => {
     if (error) {
       setError('');

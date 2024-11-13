@@ -1,6 +1,7 @@
 import { IWeatherReport } from '@/types/weather';
 import { create } from 'zustand';
 
+// Storing all recent reports and currently selected weather report
 interface IWeatherStore {
   selectedWeather: IWeatherReport | null;
   reports: IWeatherReport[];

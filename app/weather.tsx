@@ -5,6 +5,7 @@ import { capitalizeSentence } from '@/utils/string';
 import { useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+// All wind directions with their labels
 const windDirections = {
   0: 'N',
   22.5: 'NNE',
@@ -27,6 +28,7 @@ const windDirections = {
 export default function WeatherPage() {
   const { selectedWeather } = useWeatherStore();
 
+  // Checking whether to use imperial or metric system
   const temperatureUnit = useMemo(
     () => (selectedWeather?.measurement === Unit.METRIC ? '°C' : '°F'),
     [selectedWeather?.measurement],
@@ -37,6 +39,7 @@ export default function WeatherPage() {
     [selectedWeather?.measurement],
   );
 
+  // Calculating wind direction label by finding lowest difference between values
   const windDirection = useMemo(
     () =>
       Object.entries(windDirections).reduce((prev, curr) => {
@@ -59,6 +62,7 @@ export default function WeatherPage() {
     >
       <Image
         source={{
+          // In case icon is unavailable, showing sunny weather
           uri: getWeatherIconUrl(selectedWeather?.weather[0].icon || '01d'),
           width: 192,
           height: 192,
