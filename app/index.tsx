@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 import { getWeather } from '@/api/api';
 import { useWeatherStore } from '@/store/weatherStore';
 import { IWeatherReport } from '@/types/weather';
+import { capitalizeSentence } from '@/utils/string';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
@@ -23,12 +24,12 @@ export default function HomeScreen() {
     setIsLoading(true);
     getWeather(search)
       .then(data => {
-          console.log('🔔🔔🔔 ~ file: index.tsx:29 ~ handleSearch ~ data => ', data);
+        console.log('🔔🔔🔔 ~ file: index.tsx:29 ~ handleSearch ~ data => ', data);
         selectWeather(data as IWeatherReport);
         router.navigate('/weather');
       })
       .catch(e => {
-        setError(`${e.message[0].toUpperCase()}${e.message.slice(1)}`);
+        setError(capitalizeSentence(e.message));
       })
       .finally(() => setIsLoading(false));
   };
