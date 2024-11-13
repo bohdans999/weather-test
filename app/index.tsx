@@ -1,4 +1,12 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { getWeather } from '@/api/api';
 import RadioButtonsSelector from '@/components/RadioButton';
@@ -26,18 +34,28 @@ export default function HomeScreen() {
   // Unit of measurement state
   const [unit, setUnit] = useState(Unit.METRIC);
 
+  // Recent reports queries state
+  const [reports, setReports] = useState<{ [key: string]: string }>({});
+
   // Fetches weather data
-  const handleSearch = () => {
+  const handleSearch = (query: string) => {
     if (!search) {
       setError('Please type in city name');
       return;
     }
 
     setIsLoading(true);
-    getWeather(search, unit)
+    getWeather(query, unit)
       .then(data => {
         // Selects data and redirects to the details page
-        selectWeather(data as IWeatherReport);
+        const report = data as IWeatherReport;
+
+        selectWeather(report);
+        // Saving the report id and name to Object (wanted to use Map, but basically same thing in this context)
+        setReports(rs => {
+          rs[report.id] = report.name;
+          return rs;
+        });
         router.navigate('/weather');
       })
       .catch(e => {
@@ -57,7 +75,10 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.itemsContainer}
+    >
       <Text style={styles.title}>Weather App</Text>
 
       <TextInput
@@ -75,7 +96,7 @@ export default function HomeScreen() {
 
       <Pressable
         style={styles.button}
-        onPress={handleSearch}
+        onPress={() => handleSearch(search)}
       >
         <Text>Search</Text>
       </Pressable>
@@ -88,7 +109,25 @@ export default function HomeScreen() {
       ) : (
         <Text style={styles.error}>{error}</Text>
       )}
-    </View>
+
+      {Object.keys(reports).length > 0 && (
+        <View>
+          <Text style={styles.queryTitle}>Recent queries:</Text>
+
+          <ScrollView contentContainerStyle={styles.reports}>
+            {Object.entries(reports).map(([id, name]) => (
+              <Pressable
+                key={id}
+                style={styles.button}
+                onPress={() => handleSearch(name)}
+              >
+                <Text style={styles.report}>{name}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+    </ScrollView>
   );
 }
 
@@ -98,11 +137,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     padding: 32,
+    paddingTop: 128,
 
     backgroundColor: '#222',
+  },
 
+  itemsContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
     display: 'flex',
     gap: 32,
   },
@@ -124,6 +165,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  queryTitle: {
+    marginBottom: 16,
+
+    textAlign: 'center',
+
+    fontSize: 24,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+
   button: {
     backgroundColor: 'white',
     padding: 12,
@@ -137,5 +188,16 @@ const styles = StyleSheet.create({
     color: 'red',
   },
 
-  radios: {},
+  reports: {
+    gap: 8,
+    alignItems: 'center',
+    display: 'flex',
+
+    marginBottom: 64,
+  },
+
+  report: {
+    minWidth: 48,
+    textAlign: 'center',
+  },
 });
