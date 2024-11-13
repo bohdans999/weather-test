@@ -3,7 +3,7 @@ import { useWeatherStore } from '@/store/weatherStore';
 import { Unit } from '@/types/weather';
 import { capitalizeSentence } from '@/utils/string';
 import { useMemo } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const windDirections = {
   0: 'N',
@@ -53,10 +53,16 @@ export default function WeatherPage() {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.wrapperContainer}
+      contentContainerStyle={styles.itemsContainer}
+    >
       <Image
-        style={styles.image}
-        src={getWeatherIconUrl(selectedWeather?.weather[0].icon || '01d')}
+        source={{
+          uri: getWeatherIconUrl(selectedWeather?.weather[0].icon || '01d'),
+          width: 192,
+          height: 192,
+        }}
       />
 
       <View>
@@ -109,27 +115,24 @@ export default function WeatherPage() {
           {speedUnit}
         </Text>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 // Styles
 const styles = StyleSheet.create({
-  container: {
+  wrapperContainer: {
     width: '100%',
     height: '100%',
     padding: 32,
 
     backgroundColor: '#222',
-
-    alignItems: 'center',
-    display: 'flex',
-    gap: 32,
   },
 
-  image: {
-    width: 192,
-    height: 192,
+  itemsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 32,
   },
 
   text: {

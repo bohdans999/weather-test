@@ -24,7 +24,6 @@ export default function HomeScreen() {
     setIsLoading(true);
     getWeather(search)
       .then(data => {
-        console.log('🔔🔔🔔 ~ file: index.tsx:29 ~ handleSearch ~ data => ', data);
         selectWeather(data as IWeatherReport);
         router.navigate('/weather');
       })
@@ -89,6 +88,7 @@ const styles = StyleSheet.create({
 
   input: {
     width: '100%',
+    maxWidth: 600,
     padding: 8,
 
     backgroundColor: 'white',
