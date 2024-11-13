@@ -1,11 +1,35 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { getWeather } from '@/api/api';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function HomeScreen() {
   // State of the input value
   const [search, setSearch] = useState('');
+
+  // Error state
+  const [error, setError] = useState('');
+
+  // Fetching state
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSearch = () => {
+    setIsLoading(true);
+    getWeather(search)
+      .then(console.log)
+      .catch(e => {
+        setError(`${e.message[0].toUpperCase()}${e.message.slice(1)}`);
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  const handleChangeText = (value: string) => {
+    if (error) {
+      setError('');
+    }
+
+    setSearch(value);
+  };
 
   return (
     <View style={styles.container}>
@@ -13,14 +37,26 @@ export default function HomeScreen() {
 
       <TextInput
         value={search}
-        onChangeText={setSearch}
+        onChangeText={handleChangeText}
         placeholder='Enter city...'
         style={styles.input}
       />
 
-      <Pressable style={styles.button}>
+      <Pressable
+        style={styles.button}
+        onPress={handleSearch}
+      >
         <Text>Search</Text>
       </Pressable>
+
+      {isLoading ? (
+        <ActivityIndicator
+          size='large'
+          color='#03cafc'
+        />
+      ) : (
+        <Text style={styles.error}>{error}</Text>
+      )}
     </View>
   );
 }
@@ -60,5 +96,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 12,
     borderRadius: 24,
+  },
+
+  error: {
+    width: '100%',
+    textAlign: 'center',
+
+    color: 'red',
   },
 });
