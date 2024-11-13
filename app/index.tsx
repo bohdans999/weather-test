@@ -1,9 +1,10 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { useState } from 'react';
+import { getWeather } from '@/api/api';
+import { useEffect, useState } from 'react';
 
 export default function HomeScreen() {
-  //   const apiUrl = process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY; // TODO: Change later
+  // State of the input value
   const [search, setSearch] = useState('');
 
   return (
@@ -24,6 +25,7 @@ export default function HomeScreen() {
   );
 }
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     width: '100%',
